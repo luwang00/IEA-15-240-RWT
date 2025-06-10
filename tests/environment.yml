@@ -41,3 +41,4 @@ dependencies:
   - pip:
     - wetb
     - marmot-agents
+    - orbit-nrel>=1.2.1
