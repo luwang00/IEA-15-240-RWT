@@ -20,7 +20,7 @@ dependencies:
   - numexpr
   - numpy
   - openfast
-  - openfast_io
+  - openfast-io
   - openpyxl
   - pandas
   - paramiko
