@@ -5,10 +5,11 @@ Requires wetb, numpy.
 
 TODO: Add checks for monopile and umaine models
 """
+import os
 import numpy as np
 from wetb.hawc2 import HTCFile
 #import weio
-import util.FAST_reader as ofio
+from openfast_io.FAST_reader import InputReader_OpenFAST
 
 import _test_functions as tstf
 from _test_functions import FROOT
@@ -20,15 +21,15 @@ class TestConsistency(unittest.TestCase):
         """Check RNA properties in OF Monopile model versus H2 onshore, UMaine, monopile
         """
 
-        ed_path = FROOT / 'OpenFAST'/  'IEA-15-240-RWT-Monopile'/  'IEA-15-240-RWT-Monopile_ElastoDyn.dat'
         h2_dir = FROOT/  'HAWC2'/  'IEA-15-240-RWT-Onshore'
         h2_path = h2_dir/  'htc'/  'IEA_15MW_RWT_Onshore.htc'
 
         h2_dir = h2_dir.as_posix()  # wetb requires strings, not Path objects...
         h2_path = h2_path.as_posix()
 
-        myobj = ofio.InputReader_OpenFAST()
-        myobj.read_ElastoDyn( str(ed_path) )
+        myobj = InputReader_OpenFAST()
+        myobj.FAST_directory = os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-Monopile')
+        myobj.read_ElastoDyn( os.path.join(myobj.FAST_directory, 'IEA-15-240-RWT-Monopile_ElastoDyn.dat' ) )
         ed_dict = myobj.fst_vt['ElastoDyn']
         #ed_dict = weio.read(str(ed_path))
         htc = HTCFile(h2_path, modelpath=h2_dir)
