@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import yaml
 #import weio
-import util.FAST_reader as ofio
+from openfast_io.FAST_reader import InputReader_OpenFAST
 
 FROOT = Path(__file__).parents[1]  # location of directory one level up (main GitHub)
 PI = np.pi  # for convenience
@@ -71,7 +71,8 @@ def calculate_mom_iner(out_diam, thick):
 def load_elastodyn_distprop(path):
     """Load distributed properties in ED file."""
     #fst = str(path).replace('_ElastoDyn.dat','.fst')
-    myobj = ofio.InputReader_OpenFAST()
+    myobj = InputReader_OpenFAST()
+    myobj.FAST_directory = ''
     myobj.read_ElastoDynTower(str(path))
     ed = myobj.fst_vt['ElastoDynTower']
     #ed = weio.read(str(path))
@@ -90,7 +91,8 @@ def load_elastodyn_distprop(path):
 
 def load_subdyn_distprop(sd_path, outfit=1.0):
     """Load distributed properties in SD file."""
-    myobj = ofio.InputReader_OpenFAST()
+    myobj = InputReader_OpenFAST()
+    myobj.FAST_directory = ''
     myobj.read_SubDyn(str(sd_path))
     sd = myobj.fst_vt['SubDyn']
     #sd = weio.read(str(sd_path))

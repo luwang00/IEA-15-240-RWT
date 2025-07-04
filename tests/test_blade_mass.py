@@ -1,4 +1,4 @@
-from util.FAST_reader import InputReader_OpenFAST
+from openfast_io.FAST_reader import InputReader_OpenFAST
 import numpy as np
 import os
 import unittest
@@ -23,16 +23,10 @@ class TestBladeMass(unittest.TestCase):
         # Check mass beamdyn defined along twist centers
         readBD1 = InputReader_OpenFAST()
         readBD1.FAST_directory = BDtw_path
-        readBD1.fst_vt = {}
-        readBD1.fst_vt['BeamDyn'] = {}
-        readBD1.fst_vt['BeamDynBlade'] = {}
-        readBD1.fst_vt['Fst'] = {}
-        readBD1.fst_vt['outlist'] = {}
-        readBD1.fst_vt['outlist']['BeamDyn'] = {}
         readBD1.fst_vt['Fst']['BDBldFile(1)'] = base_name1 + '_BeamDyn.dat'
         bd_file = os.path.join(BDtw_path, readBD1.fst_vt['Fst']['BDBldFile(1)'])
         readBD1.read_BeamDyn(bd_file)
-        BDtw = np.trapz(readBD1.fst_vt['BeamDynBlade']['beam_inertia'][:,0,0], readBD1.fst_vt['BeamDynBlade']['radial_stations']*blade_length)
+        BDtw = np.trapz(readBD1.fst_vt['BeamDynBlade'][0]['beam_inertia'][:,0,0], readBD1.fst_vt['BeamDynBlade'][0]['radial_stations']*blade_length)
         print('\nBlade mass in BD along twist centers ', BDtw)
         self.assertAlmostEqual(BDtw/ref_blade_mass,1., places=3)
 
@@ -58,12 +52,10 @@ class TestBladeMass(unittest.TestCase):
         # Load elastodyn blade
         readED = InputReader_OpenFAST()
         readED.FAST_directory = BDtw_path
-        readED.fst_vt['ElastoDyn'] = {}
-        readED.fst_vt['ElastoDynBlade'] = {}
         readED.fst_vt['ElastoDyn']['BldFile1'] = base_name1 + '_ElastoDyn_blade.dat'
         ed_file = os.path.join(BDtw_path, readED.fst_vt['ElastoDyn']['BldFile1'])
         readED.read_ElastoDynBlade(ed_file)
-        ED = np.trapz(readED.fst_vt['ElastoDynBlade']['BMassDen'], np.array(readED.fst_vt['ElastoDynBlade']['BlFract'])*blade_length)
+        ED = np.trapz(readED.fst_vt['ElastoDynBlade'][0]['BMassDen'], np.array(readED.fst_vt['ElastoDynBlade'][0]['BlFract'])*blade_length)
         print('\nBlade mass in ED ', ED)
         self.assertAlmostEqual(ED/ref_blade_mass_ED,1., places=3)
 

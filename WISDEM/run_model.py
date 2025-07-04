@@ -11,7 +11,8 @@ from generateTables import RWT_Tabular
 # File management
 thisdir = os.path.dirname(os.path.realpath(__file__))
 ontology_dir = os.path.join(os.path.dirname(thisdir), "WT_Ontology")
-fname_modeling_options = os.path.join(thisdir, "modeling_options.yaml")
+fname_modeling_mono    = os.path.join(thisdir, "modeling_options_monopile.yaml")
+fname_modeling_float   = os.path.join(thisdir, "modeling_options_floating.yaml")
 fname_analysis_options = os.path.join(thisdir, "analysis_options.yaml")
 folder_output = os.path.join(thisdir, "outputs")
 
@@ -19,6 +20,7 @@ def run_15mw(fname_wt_input):
     float_flag = fname_wt_input.find('Volturn') >= 0
     
     # Run WISDEM
+    fname_modeling_options = fname_modeling_float if float_flag else fname_modeling_mono
     prob, modeling_options, analysis_options = run_wisdem(fname_wt_input, fname_modeling_options, fname_analysis_options)
 
     # Produce standard plots
