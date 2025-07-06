@@ -1,5 +1,5 @@
 #import weio
-import util.FAST_reader as ofio
+from openfast_io.FAST_reader import InputReader_OpenFAST
 import os
 import pandas as pd
 import unittest
@@ -11,10 +11,13 @@ class TestConsistency(unittest.TestCase):
         # ElastoDyn vals
         #ED_mono = weio.read( os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-Monopile', 'IEA-15-240-RWT-Monopile_ElastoDyn.dat') )
         #ED_semi = weio.read( os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-UMaineSemi', 'IEA-15-240-RWT-UMaineSemi_ElastoDyn.dat') )
-        myobj = ofio.InputReader_OpenFAST()
-        myobj.read_ElastoDyn( os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-Monopile', 'IEA-15-240-RWT-Monopile_ElastoDyn.dat') )
+        myobj = InputReader_OpenFAST()
+        myobj.FAST_directory = os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-Monopile')
+        myobj.read_ElastoDyn( os.path.join(myobj.FAST_directory, 'IEA-15-240-RWT-Monopile_ElastoDyn.dat' ) )
         ED_mono = myobj.fst_vt['ElastoDyn'].copy()
-        myobj.read_ElastoDyn( os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-UMaineSemi', 'IEA-15-240-RWT-UMaineSemi_ElastoDyn.dat') )
+        
+        myobj.FAST_directory = os.path.join(FROOT, 'OpenFAST', 'IEA-15-240-RWT-UMaineSemi')
+        myobj.read_ElastoDyn( os.path.join(myobj.FAST_directory, 'IEA-15-240-RWT-UMaineSemi_ElastoDyn.dat' ))
         ED_semi = myobj.fst_vt['ElastoDyn'].copy()
 
         # Excel tabular data

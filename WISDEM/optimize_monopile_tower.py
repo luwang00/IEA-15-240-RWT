@@ -8,7 +8,7 @@ import wisdem.postprocessing.compare_designs as compare_designs
 thisdir = os.path.dirname(os.path.realpath(__file__))
 ontology_dir = os.path.join(os.path.dirname(thisdir), "WT_Ontology")
 fname_wt_input = os.path.join(ontology_dir, "IEA-15-240-RWT.yaml")
-fname_modeling = os.path.join(thisdir, "modeling_options_monopile.yaml")
+fname_modeling = os.path.join(thisdir, "modeling_options_monopile_only.yaml")
 fname_analysis_noopt = os.path.join(thisdir, "analysis_options.yaml")
 fname_analysis_opt = os.path.join(thisdir, "analysis_options_monopile.yaml")
 folder_output = os.path.join(thisdir, "outputs")

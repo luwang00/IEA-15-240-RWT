@@ -20,6 +20,7 @@ dependencies:
   - numexpr
   - numpy
   - openfast
+  - openfast-io
   - openpyxl
   - pandas
   - paramiko
@@ -40,4 +41,4 @@ dependencies:
   - xlwt
   - pip:
     - wetb
-    - marmot-agents
+    - orbit-nrel>=1.2.1
