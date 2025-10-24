@@ -32,7 +32,7 @@ dependencies:
   - psutil
   - pbr
   - pytables
-  - rosco ==2.9.5
+  - rosco ==2.10
   - sshtunnel
   - simpy
   - tomli
