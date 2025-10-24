@@ -17,6 +17,7 @@ dependencies:
   - markupsafe
   - matplotlib
   - mock
+  - moorpy=1.1
   - numexpr
   - numpy
   - openfast
