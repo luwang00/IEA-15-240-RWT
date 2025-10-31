@@ -17,6 +17,7 @@ dependencies:
   - markupsafe
   - matplotlib
   - mock
+  - moorpy=1.1
   - numexpr
   - numpy
   - openfast
@@ -32,7 +33,7 @@ dependencies:
   - psutil
   - pbr
   - pytables
-  - rosco ==2.9.5
+  - rosco ==2.10
   - sshtunnel
   - simpy
   - tomli
