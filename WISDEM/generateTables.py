@@ -159,7 +159,7 @@ class RWT_Tabular(object):
             ws['B1'] = self.yaml['airfoils'][iaf]['name']
 
             ws['A2'] = 'relative_thickness'
-            ws['B2'] = self.yaml['airfoils'][iaf]['relative_thickness']
+            ws['B2'] = self.yaml['airfoils'][iaf]['rthick']
 
             ws['A3'] = 'aerodynamic_center'
             ws['B3'] = self.yaml['airfoils'][iaf]['aerodynamic_center']
@@ -180,42 +180,47 @@ class RWT_Tabular(object):
             # Write airfoil polars
             row_start = 6+nxy+2
             for ipol in range(len(self.yaml['airfoils'][iaf]['polars'])):
+                ws.cell(row=row_start, column=1, value='Configuration')
+                ws.cell(row=row_start, column=2, value=self.yaml['airfoils'][iaf]['polars'][ipol]['configuration'])
+                row_start += 1
+                
                 # Reynolds number label
-                ws.cell(row=row_start, column=1, value='Reynolds')
-                ws.cell(row=row_start, column=2, value=self.yaml['airfoils'][iaf]['polars'][ipol]['re'])
+                for ire in range(len(self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'])):
+                    ws.cell(row=row_start, column=1, value='Reynolds')
+                    ws.cell(row=row_start, column=2, value=self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['re'])
 
-                # Create data array in pandas
-                polmat = np.c_[self.yaml['airfoils'][iaf]['polars'][ipol]['c_l']['grid'],
-                               self.yaml['airfoils'][iaf]['polars'][ipol]['c_l']['values'],
-                               self.yaml['airfoils'][iaf]['polars'][ipol]['c_d']['values'],
-                               self.yaml['airfoils'][iaf]['polars'][ipol]['c_m']['values']]
-                polDF = pd.DataFrame(polmat, columns=['alpha [rad]',
-                                                      'c_l',
-                                                      'c_d',
-                                                      'c_m'])
+                    # Create data array in pandas
+                    polmat = np.c_[self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['c_l']['grid'],
+                                   self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['c_l']['values'],
+                                   self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['c_d']['values'],
+                                   self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['c_m']['values']]
+                    polDF = pd.DataFrame(polmat, columns=['alpha [rad]',
+                                                          'c_l',
+                                                          'c_d',
+                                                          'c_m'])
 
-                # Append to worksheet
-                for r in dataframe_to_rows(polDF, index=False, header=True):
-                    ws.append(r)
+                    # Append to worksheet
+                    for r in dataframe_to_rows(polDF, index=False, header=True):
+                        ws.append(r)
 
-                # Header row style formatting
-                for cell in ws[str(row_start)+':'+str(row_start)]:
-                    cell.style = 'Headline 1'
-                for cell in ws[str(row_start+1)+':'+str(row_start+1)]:
-                    cell.style = 'Headline 2'
-                    
-                # Prep for next polar
-                row_start += polmat.shape[0]+1
+                    # Header row style formatting
+                    for cell in ws[str(row_start)+':'+str(row_start)]:
+                        cell.style = 'Headline 1'
+                    for cell in ws[str(row_start+1)+':'+str(row_start+1)]:
+                        cell.style = 'Headline 2'
 
-                # Make plots with this airfoil
-                if self.yaml['airfoils'][iaf]['name'] == 'circular': continue
-                ReStr = np.format_float_scientific(self.yaml['airfoils'][iaf]['polars'][ipol]['re'], exp_digits=1, trim='-', sign=False)
-                labels.append(self.yaml['airfoils'][iaf]['name']+' Re='+ReStr.replace('+',''))
-                alpha = np.rad2deg(polDF['alpha [rad]'])
-                ind = np.where(np.abs(alpha) <= 20.0)[0]
-                axCLA.plot(alpha[ind], polDF['c_l'][ind], linewidth=1)
-                axLDA.plot(alpha[ind], polDF['c_l'][ind]/polDF['c_d'][ind], linewidth=1)
-                axCLCD.plot(polDF['c_d'][ind], polDF['c_l'][ind], linewidth=1)
+                    # Prep for next polar
+                    row_start += polmat.shape[0]+1
+
+                    # Make plots with this airfoil
+                    if self.yaml['airfoils'][iaf]['name'] == 'circular': continue
+                    ReStr = np.format_float_scientific(self.yaml['airfoils'][iaf]['polars'][ipol]['re_sets'][ire]['re'], exp_digits=1, trim='-', sign=False)
+                    labels.append(self.yaml['airfoils'][iaf]['name']+' Re='+ReStr.replace('+',''))
+                    alpha = np.rad2deg(polDF['alpha [rad]'])
+                    ind = np.where(np.abs(alpha) <= 20.0)[0]
+                    axCLA.plot(alpha[ind], polDF['c_l'][ind], linewidth=1)
+                    axLDA.plot(alpha[ind], polDF['c_l'][ind]/polDF['c_d'][ind], linewidth=1)
+                    axCLCD.plot(polDF['c_d'][ind], polDF['c_l'][ind], linewidth=1)
 
             # Header row style formatting
             for cell in ws["1:1"]:
@@ -256,17 +261,19 @@ class RWT_Tabular(object):
         # Write airfoil xy-coordinates
         ws['A1'] = 'Spanwise position [r/R]'
         ws['B1'] = 'Airfoil name'
-        npts = len(self.yaml['components']['blade']['outer_shape_bem']['airfoil_position']['grid'])
+        ws['B1'] = 'Polar Configuration'
+        npts = len(self.yaml['components']['blade']['outer_shape']['airfoils'])
         for k in range(npts):
-            ws.cell(row=k+2, column=1, value=self.yaml['components']['blade']['outer_shape_bem']['airfoil_position']['grid'][k])
-            ws.cell(row=k+2, column=2, value=self.yaml['components']['blade']['outer_shape_bem']['airfoil_position']['labels'][k])
-            self.airfoil_list.append( self.yaml['components']['blade']['outer_shape_bem']['airfoil_position']['labels'][k] )
-            self.airfoil_span.append( self.yaml['components']['blade']['outer_shape_bem']['airfoil_position']['grid'][k] )
+            ws.cell(row=k+2, column=1, value=self.yaml['components']['blade']['outer_shape']['airfoils'][k]['spanwise_position'])
+            ws.cell(row=k+2, column=2, value=self.yaml['components']['blade']['outer_shape']['airfoils'][k]['name'])
+            ws.cell(row=k+2, column=2, value=self.yaml['components']['blade']['outer_shape']['airfoils'][k]['configuration'][0])
+            self.airfoil_list.append( self.yaml['components']['blade']['outer_shape']['airfoils'][k]['spanwise_position'])
+            self.airfoil_span.append( self.yaml['components']['blade']['outer_shape']['airfoils'][k]['name'])
 
         ws.cell(row=npts+3, column=1, value='Profile')
 
         # Interpolation function for arbitraty grids
-        mygrid = self.yaml['components']['blade']['outer_shape_bem']['chord']['grid']
+        mygrid = self.yaml['components']['blade']['outer_shape']['chord']['grid']
         def myinterp(xgrid, val):
             try:
                 y = interp1d(xgrid, val, kind='cubic', bounds_error=False, fill_value=0.0, assume_sorted=True).__call__(mygrid)
@@ -275,25 +282,31 @@ class RWT_Tabular(object):
             return y
         
         # Create blade geometry array in pandas
-        geommat = np.c_[self.yaml['components']['blade']['outer_shape_bem']['chord']['grid'],
-                        self.yaml['components']['blade']['outer_shape_bem']['chord']['values'],
-                        myinterp(self.yaml['components']['blade']['outer_shape_bem']['twist']['grid'],
-                                 self.yaml['components']['blade']['outer_shape_bem']['twist']['values']),
-                        myinterp(self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['grid'],
-                                 self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['values']),
-                        myinterp(self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['z']['grid'],
-                                 self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['z']['values']),
-                        myinterp(self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['x']['grid'],
-                                 self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['x']['values']),
-                        myinterp(self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['y']['grid'],
-                                 self.yaml['components']['blade']['outer_shape_bem']['reference_axis']['y']['values'])  ]
+        geommat = np.c_[self.yaml['components']['blade']['outer_shape']['chord']['grid'],
+                        self.yaml['components']['blade']['outer_shape']['chord']['values'],
+                        myinterp(self.yaml['components']['blade']['outer_shape']['twist']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['twist']['values']),
+                        myinterp(self.yaml['components']['blade']['outer_shape']['section_offset_y']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['section_offset_y']['values']),
+                        #myinterp(self.yaml['components']['blade']['outer_shape']['section_offset_x']['grid'],
+                        #         self.yaml['components']['blade']['outer_shape']['section_offset_x']['values']),
+                        myinterp(self.yaml['components']['blade']['outer_shape']['rthick']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['rthick']['values']),
+                        myinterp(self.yaml['components']['blade']['outer_shape']['reference_axis']['z']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['reference_axis']['z']['values']),
+                        myinterp(self.yaml['components']['blade']['outer_shape']['reference_axis']['x']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['reference_axis']['x']['values']),
+                        myinterp(self.yaml['components']['blade']['outer_shape']['reference_axis']['y']['grid'],
+                                 self.yaml['components']['blade']['outer_shape']['reference_axis']['y']['values'])  ]
         geomDF = pd.DataFrame(geommat, columns=['Spanwise position [r/R]',
                                               'Chord [m]',
                                               'Twist [rad]',
-                                              'Pitch axis [x/c]',
-                                              'Span [m]',
-                                              'Prebend [m]',
-                                              'Sweep [m]'])
+                                              'Section offset y-dir [m]',
+                                              #'Section offset x-dir [m]',
+                                              'Relative thickness [t/c]',
+                                              'Reference-x (span) [m]',
+                                              'Reference-y (prebend) [m]',
+                                              'Reference-z (sweep) [m]'])
         
         # Set convention that positive prebend means upward tilt to give tower strike margin
         geomDF['Prebend [m]'] *= -1.0
@@ -678,15 +691,15 @@ class RWT_Tabular(object):
         
         '''
         # Make plot
-        blade_x  = np.array(self.yaml['components']['blade']['outer_shape_bem']['chord']['grid'])
+        blade_x  = np.array(self.yaml['components']['blade']['outer_shape']['chord']['grid'])
         def myinterp(xgrid, val):
             return interp1d(xgrid, val, kind='cubic', bounds_error=False, fill_value=0.0, assume_sorted=True).__call__(blade_x)
-        blade_le = (np.array(self.yaml['components']['blade']['outer_shape_bem']['chord']['values']) *
-                    myinterp(self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['grid'],
-                             self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['values']) )
-        blade_te = (np.array(self.yaml['components']['blade']['outer_shape_bem']['chord']['values']) *
-                    (1. - myinterp(self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['grid'],
-                                   self.yaml['components']['blade']['outer_shape_bem']['pitch_axis']['values']) ) )
+        blade_le = (np.array(self.yaml['components']['blade']['outer_shape']['chord']['values']) *
+                    myinterp(self.yaml['components']['blade']['outer_shape']['pitch_axis']['grid'],
+                             self.yaml['components']['blade']['outer_shape']['pitch_axis']['values']) )
+        blade_te = (np.array(self.yaml['components']['blade']['outer_shape']['chord']['values']) *
+                    (1. - myinterp(self.yaml['components']['blade']['outer_shape']['pitch_axis']['grid'],
+                                   self.yaml['components']['blade']['outer_shape']['pitch_axis']['values']) ) )
         xx      = sumDF.index 
         y_mass  = sumDF['Mass center (chordwise), m']
         y_neut  = sumDF['Neutral axes (chordwise), m']
