@@ -43,6 +43,8 @@ WISDEM:
             tol: 1e-9
     BOS:
         flag: False
+    LCOE:
+        flag: False
 
     Loading:
         mass: 967074.89012356
@@ -52,3 +54,17 @@ WISDEM:
             - force: [2427925.55809699, 29094.73368413, -7074256.2758736]
               moment: [-278500.68674037, -12634193.44789813, 1299461.07383137]
               velocity: 11.73732
+
+Environment:
+    air_density: 1.225
+    air_dyn_viscosity: 1.81e-05
+    weib_shape_parameter: 2.0
+    air_speed_sound: 340.0
+    shear_exp: 0.12
+    water_density: 1025.0
+    water_dyn_viscosity: 0.0013351
+    soil_shear_modulus: 140000000.0
+    soil_poisson: 0.4
+    water_depth: 30.0
+    significant_wave_height: 4.52
+    significant_wave_period: 9.45
