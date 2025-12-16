@@ -14,6 +14,7 @@ dependencies:
   - coverage
   - h5py
   - jinja2
+  - jsonmerge
   - markupsafe
   - matplotlib
   - mock
@@ -42,3 +43,4 @@ dependencies:
   - pip:
     - wetb
     - orbit-nrel>=1.2.1
+    - windIO
