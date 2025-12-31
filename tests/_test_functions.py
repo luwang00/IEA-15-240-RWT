@@ -20,12 +20,12 @@ def load_body_properties(bodyname, yamldict, start_from_zero=False):
     # body dictionary
     bodydict = yamldict['components'][bodyname]
     # get tower dimensions
-    twr_stn = np.array(bodydict['outer_shape_bem']['reference_axis']['z']['values'])
+    twr_stn = np.array(bodydict['reference_axis']['z']['values'])
     if start_from_zero:
         twr_stn -= twr_stn[0]
-    outfitting_factor = bodydict['internal_structure_2d_fem']['outfitting_factor']
-    out_diam = np.array(bodydict['outer_shape_bem']['outer_diameter']['values'])
-    wall = bodydict['internal_structure_2d_fem']['layers'][0]
+    outfitting_factor = bodydict['structure']['outfitting_factor']
+    out_diam = np.array(bodydict['outer_shape']['outer_diameter']['values'])
+    wall = bodydict['structure']['layers'][0]
     assert wall['name'] == bodyname + '_wall'
     thick = np.array(wall['thickness']['values'])
     # get material properties
