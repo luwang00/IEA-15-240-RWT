@@ -12,10 +12,10 @@ jobs:
       fail-fast: False
       matrix:
         os: ["ubuntu-latest"]
-        python-version: [3.11]
+        python-version: [3.13]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: conda-incubator/setup-miniconda@v3
         # https://github.com/marketplace/actions/setup-miniconda
         with:

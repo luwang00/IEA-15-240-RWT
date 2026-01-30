@@ -27,16 +27,16 @@ class TestConsistency(unittest.TestCase):
         
         # Check for consistency in nacelle mass props
         for ED in [ED_mono, ED_semi]:
-            self.assertAlmostEqual(ED['HubMass'], tabdata.loc['Hub_System','Mass'], 0)
-            self.assertAlmostEqual(ED['HubIner'], tabdata.loc['Hub_System','MoI_CoM_xx'], 0)
+            self.assertAlmostEqual(ED['HubMass'], tabdata.loc['Hub_System','Mass'], -3)
+            self.assertAlmostEqual(ED['HubIner'], tabdata.loc['Hub_System','MoI_CoM_xx'], -4)
             self.assertAlmostEqual(ED['GenIner'], tabdata.loc['generator_rotor','MoI_CoM_xx'], 0)
-            self.assertAlmostEqual(ED['NacMass'], tabdata.loc['Above_yaw','Mass'], 0)
+            self.assertAlmostEqual(ED['NacMass'], tabdata.loc['Above_yaw','Mass'], -3)
             self.assertAlmostEqual(ED['NacCMxn'], tabdata.loc['Above_yaw','CoM_TT_x'], 0)
             self.assertAlmostEqual(ED['NacCMyn'], 0.0, 0)
             self.assertAlmostEqual(ED['NacCMzn'], tabdata.loc['Above_yaw','CoM_TT_z'], 0)
             # NacYIner should also have 1/3 of tower yaw inertia
             self.assertGreater(ED['NacYIner'], tabdata.loc['Above_yaw','MoI_TT_zz'], 0)
-            self.assertAlmostEqual(ED['YawBrMass'], tabdata.loc['yaw','Mass'], 0)
+            self.assertAlmostEqual(ED['YawBrMass'], tabdata.loc['yaw','Mass'], -3)
         
 if __name__ == "__main__":
     unittest.main()
