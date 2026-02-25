@@ -125,7 +125,7 @@ class RWT_Tabular(object):
 
         irow = 2
         for k,v in self.overview.items():
-            myv = float(v) if type(v)==type(np.array([])) else v
+            myv = v[0] if type(v)==type(np.array([])) else v
             ws.cell(row=irow, column=1, value=k)
             ws.cell(row=irow, column=2, value=myv)
             irow += 1
@@ -456,7 +456,7 @@ class RWT_Tabular(object):
         ax.set_ylabel('Thickness [mm]', size=14, weight='bold')
         vy = ax.get_ylim()
         xtick = 0.5 + 0.1*np.arange(len(self.airfoil_list)) + 0.05
-        labs  = [self.airfoil_list[m]+' '+str(int(np.round(1e2*self.airfoil_span[m])))+'%' for m in range(naf)]
+        labs  = [self.airfoil_list[m]+' '+str(int(round(1e2*self.airfoil_span[m])))+'%' for m in range(naf)]
         #ax.set_xticks( np.r_[xtick, xtick+1, xtick+2] )
         ax.set_xticks( np.r_[xtick, xtick+1.1] )
         #ax.set_xticklabels( labs+labs+labs, rotation='vertical' )
@@ -509,13 +509,11 @@ class RWT_Tabular(object):
             ax.set_xlabel('Airfoil s-coordinate [-]', size=14, weight='bold')
             ax.set_ylabel('Thickness [mm]', size=14, weight='bold')
             vy = ax.get_ylim()
-            ax.text(0.6, 0.95*np.diff(vy), self.airfoil_list[iaf]+' airfoil, '+str(int(np.round(1e2*self.airfoil_span[iaf])))+'% span',
-                    size=12, weight='bold')
+            ax.text(0.6, 0.95*np.diff(vy), self.airfoil_list[iaf]+' airfoil, '+str(int(round(1e2*self.airfoil_span[iaf])))+'% span', size=12, weight='bold')
             ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
             ax.set_xticklabels(['TE','Suction Side', 'LE','Pressure Side','TE'])
             fig.subplots_adjust(bottom = 0.15, left = 0.15)
-            fig.savefig('outputs' + os.sep + 'layers_'+self.airfoil_list[iaf]+'_'+str(int(np.round(1e2*self.airfoil_span[iaf])))+'.pdf',
-                        pad_inches=0.1, bbox_inches='tight')
+            #fig.savefig('outputs' + os.sep + 'layers_'+self.airfoil_list[iaf]+'_'+str(int(round(1e2*self.airfoil_span[iaf])))+'.pdf', pad_inches=0.1, bbox_inches='tight')
             plt.close()
 
         # Cross section over-view sheet
