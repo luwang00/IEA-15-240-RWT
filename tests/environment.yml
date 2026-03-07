@@ -37,10 +37,12 @@ dependencies:
   - sshtunnel
   - simpy
   - tomli
-  - wisdem>=4.0
+  - wisdem>=4.1
   - xlrd
   - xlwt
   - pip:
     - wetb
     - orbit-nrel>=1.2.1
-    - windIO
+    - windIO>=2.1.1
+    - wombat
+    
