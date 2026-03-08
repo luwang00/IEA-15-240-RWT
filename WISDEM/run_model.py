@@ -131,7 +131,7 @@ def run_15mw(fname_wt_input):
     overview['Design tip speed ratio'] = prob['control.rated_TSR']
     overview['Minimum rotor speed [rpm]'] = prob.get_val('control.minOmega','rpm')
     overview['Maximum rotor speed [rpm]'] = prob.get_val('control.maxOmega','rpm')
-    overview['Maximum tip speed [m/s]'] = prob['control.max_TS']
+    overview['Maximum tip speed [m/s]'] = prob['control.max_allowable_blade_tip_speed']
     overview['Shaft tilt angle [deg]'] = prob.get_val('drivetrain.uptilt','deg')
     overview['Rotor cone angle [deg]'] = prob.get_val('hub.cone','deg')
     overview['Tower top to hub flange height [m]'] = prob['drivetrain.distance_tt_hub']
