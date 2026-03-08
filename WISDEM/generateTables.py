@@ -509,7 +509,7 @@ class RWT_Tabular(object):
             ax.set_xlabel('Airfoil s-coordinate [-]', size=14, weight='bold')
             ax.set_ylabel('Thickness [mm]', size=14, weight='bold')
             vy = ax.get_ylim()
-            ax.text(0.6, 0.95*np.diff(vy), f'{self.airfoil_list[iaf]} airfoil, {int(round(1e2*self.airfoil_span[iaf]))}% span', size=12, weight='bold')
+            ax.text(0.6, 0.95*np.diff(vy)[0], f'{self.airfoil_list[iaf]} airfoil, {int(round(1e2*self.airfoil_span[iaf]))}% span', size=12, weight='bold')
             ax.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
             ax.set_xticklabels(['TE','Suction Side', 'LE','Pressure Side','TE'])
             fig.subplots_adjust(bottom = 0.15, left = 0.15)
