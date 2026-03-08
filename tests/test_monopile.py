@@ -92,7 +92,7 @@ class TestConsistency(unittest.TestCase):
         # yamldata = tstf.load_yaml(yaml_path)
         # twr_stn_yaml, out_diam_yaml, thick_yaml, E, G, rho, outfit = tstf.load_body_properties('monopile', yamldata)
         # mpl_yaml = tstf.calculate_mpl(out_diam_yaml, thick_yaml, rho, outfitting_factor=outfit)
-        # mass_yaml = np.trapz(mpl_yaml, twr_stn_yaml) + 100e3
+        # mass_yaml = np.trapezoid(mpl_yaml, twr_stn_yaml) + 100e3
         mass_yaml = 1309947.640745313  # from -75 m to +15 m [kg]
 
         # load the hawc2 embedded-monopile tower properties
@@ -106,8 +106,8 @@ class TestConsistency(unittest.TestCase):
         mpl_h2_mon = h2_mon[:, 1]
 
         # calculate hawc2 mass
-        mass_embmon = np.trapz(mpl_h2_embmon, twr_stn_embdmon)
-        mass_mon = np.trapz(mpl_h2_mon, twr_stn_mon)
+        mass_embmon = np.trapezoid(mpl_h2_embmon, twr_stn_embdmon)
+        mass_mon = np.trapezoid(mpl_h2_mon, twr_stn_mon)
         mass_h2 = mass_embmon + mass_mon + 100e3
 
         assert abs((mass_h2 - mass_yaml) / mass_yaml) < 0.01

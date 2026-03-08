@@ -33,17 +33,7 @@ def run_15mw(fname_wt_input):
     bladeStiffDF = getter.get_blade_elasticity(prob)
 
     # Blade internal laminate layer details
-    layerDF = []
-    l_s = prob.get_val("blade.internal_structure_2d_fem.s")
-    lthick = prob.get_val("blade.internal_structure_2d_fem.layer_thickness", 'm')
-    lorient = prob.get_val("blade.internal_structure_2d_fem.layer_orientation", 'deg')
-    lstart = prob.get_val("blade.internal_structure_2d_fem.layer_start_nd")
-    lend = prob.get_val("blade.internal_structure_2d_fem.layer_end_nd")
-    nlay = lthick.shape[0]
-    layer_cols = ['Span','Thickness [m]','Fiber angle [deg]','Layer Start','Layer End']
-    for k in range(nlay):
-        ilay = np.c_[l_s, lthick[k,:], lorient[k,:], lstart[k,:], lend[k,:]]
-        layerDF.append( pd.DataFrame(data=ilay, columns=layer_cols) )
+    layerDF, webDF = getter.get_blade_layers(prob)
     
     # Tabular output: Rotor Performance
     perfDF = getter.get_rotor_performance(prob)
@@ -136,17 +126,17 @@ def run_15mw(fname_wt_input):
     overview['Airfoil series'] = 'FFA-W3'
     overview['Hub height [m]'] = prob['configuration.hub_height_user']
     overview['Hub diameter [m]'] = prob['hub.diameter']
-    overview['Hub Overhang [m]'] = -prob['nacelle.overhang']
+    overview['Hub Overhang [m]'] = -prob['drivetrain.overhang']
     overview['Drive train'] = 'Low speed, Direct drive'
     overview['Design tip speed ratio'] = prob['control.rated_TSR']
     overview['Minimum rotor speed [rpm]'] = prob.get_val('control.minOmega','rpm')
     overview['Maximum rotor speed [rpm]'] = prob.get_val('control.maxOmega','rpm')
-    overview['Maximum tip speed [m/s]'] = prob['control.max_TS']
-    overview['Shaft tilt angle [deg]'] = prob.get_val('nacelle.uptilt','deg')
+    overview['Maximum tip speed [m/s]'] = prob['control.max_allowable_blade_tip_speed']
+    overview['Shaft tilt angle [deg]'] = prob.get_val('drivetrain.uptilt','deg')
     overview['Rotor cone angle [deg]'] = prob.get_val('hub.cone','deg')
-    overview['Tower top to hub flange height [m]'] = prob['nacelle.distance_tt_hub']
+    overview['Tower top to hub flange height [m]'] = prob['drivetrain.distance_tt_hub']
     overview['Generator rated efficiency [%]'] = prob['rotorse.rp.powercurve.rated_efficiency']
-    overview['Blade pre-bend [m]'] = prob['blade.outer_shape_bem.ref_axis'][-1,0]
+    overview['Blade pre-bend [m]'] = prob['blade.ref_axis'][-1,0]
     overview['Blade mass [t]'] = 1e-3*prob['rotorse.blade_mass']
     overview['Hub mass [t]'] = 1e-3*prob['drivese.hub_mass']
     overview['Generator mass [t]'] = 1e-3*prob['drivese.generator_mass']
@@ -171,8 +161,8 @@ def run_15mw(fname_wt_input):
         overview['Volturn-S draft [m]'] = 20.0
 
     # Write all tabular data to xlsx
-    myobj = RWT_Tabular(fname_wt_input, towDF=towDF, rotDF=perfDF,
-                        nacDF=nacDF, layerDF=layerDF, overview=overview)
+    myobj = RWT_Tabular(fname_wt_input, bladeDF=bladeDF, towDF=towDF, rotDF=perfDF,
+                        nacDF=nacDF, layerDF=layerDF, webDF=webDF, overview=overview)
     myobj.write_all()
 
 

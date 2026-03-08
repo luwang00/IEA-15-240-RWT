@@ -14,14 +14,14 @@ dependencies:
   - coverage
   - h5py
   - jinja2
+  - jsonmerge
   - markupsafe
   - matplotlib
   - mock
-  - moorpy=1.1
   - numexpr
   - numpy
-  - openfast
-  - openfast-io
+  - openfast>=4.1.0
+  - openfast-io>=4.1.0
   - openpyxl
   - pandas
   - paramiko
@@ -33,13 +33,16 @@ dependencies:
   - psutil
   - pbr
   - pytables
-  - rosco ==2.10
+  - rosco>=2.10.1
   - sshtunnel
   - simpy
   - tomli
-  - wisdem
+  - wisdem>=4.1
   - xlrd
   - xlwt
   - pip:
     - wetb
     - orbit-nrel>=1.2.1
+    - windIO>=2.1.1
+    - wombat
+    
